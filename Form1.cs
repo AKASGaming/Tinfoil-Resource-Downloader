@@ -12,13 +12,14 @@ using System.Windows.Forms;
 using HtmlAgilityPack;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 using System.Net.NetworkInformation;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using Downloader;
-using static System.Net.WebRequestMethods;
-using AngleSharp.Html.Dom;
+using AngleSharp.Io;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.ComponentModel;
+using DownloadProgressChangedEventArgs = Downloader.DownloadProgressChangedEventArgs;
+using System.Threading;
 
 namespace Tinfoil_Resource_Downloader
 {
@@ -26,6 +27,8 @@ namespace Tinfoil_Resource_Downloader
     {
         public OBJData filteredAlt { get; private set; }
         public int Initial { get; private set; }
+        public EventHandler<Downloader.DownloadProgressChangedEventArgs> OnDownloadProgressChanged { get; private set; }
+        public EventHandler<AsyncCompletedEventArgs> OnDownloadFileCompleted { get; private set; }
 
         public bannerLabel()
         {
@@ -62,24 +65,32 @@ namespace Tinfoil_Resource_Downloader
 
                     using (var response = httpClient.GetAsync(url))
                     {
-                        Output.WriteLine("url " + url);
-                        //Output.WriteLine("response " + response.Result.Content.ReadAsStringAsync().Result);
 
-                        RootObject obj = JsonConvert.DeserializeObject<RootObject>(response.Result.Content.ReadAsStringAsync().Result);
-                        //Output.WriteLine("data " + obj.Data);
+                        if (response.Status == TaskStatus.Faulted)
+                        {
+                            MessageBox.Show("Your device was unable to connect to: " + url, "Error");
+                        }
+                        else
+                        {
 
-                        Output.WriteLine("Finder " + JsonConvert.SerializeObject(obj.Data.Where(n => n.ID == ID).FirstOrDefault()));
-                        Output.WriteLine("ID " + ID);
+                            Output.WriteLine("url " + url);
+                            //Output.WriteLine("response " + response.Result.Content.ReadAsStringAsync().Result);
+
+                            RootObject obj = JsonConvert.DeserializeObject<RootObject>(response.Result.Content.ReadAsStringAsync().Result);
+                            //Output.WriteLine("data " + obj.Data);
+
+                            Output.WriteLine("Finder " + JsonConvert.SerializeObject(obj.Data.Where(n => n.ID == ID).FirstOrDefault()));
+                            Output.WriteLine("ID " + ID);
 
 
-                        var filtered = obj.Data.Where(n => n.ID == ID).FirstOrDefault();
-                        this.filteredAlt = filtered;
-                        Output.WriteLine("filtered " + filtered);
+                            var filtered = obj.Data.Where(n => n.ID == ID).FirstOrDefault();
+                            this.filteredAlt = filtered;
+                            Output.WriteLine("filtered " + filtered);
 
 
-                        LoadData(filtered);
-                        await LoadImages(filtered);
-
+                            LoadData(filtered);
+                            await LoadImages(filtered);
+                        }
 
                     }
                 }
@@ -312,9 +323,19 @@ namespace Tinfoil_Resource_Downloader
 
             };
             var downloader = new DownloadService(downloadOpt);
+            downloader.DownloadProgressChanged += ProgressChanged;
+            downloader.DownloadFileCompleted += ProgressFinished;
             await downloader.DownloadFileTaskAsync(imageUrl, (filename + format));
         }
 
+        private void ProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            downloadBar.Value = (int)e.ProgressPercentage;
+        }
+        private void ProgressFinished(object sender, AsyncCompletedEventArgs e)
+        {
+            downloadBar.Value = 0;
+        }
 
         public string CharachterCleaner(string input)
         {
