@@ -20,6 +20,8 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.ComponentModel;
 using DownloadProgressChangedEventArgs = Downloader.DownloadProgressChangedEventArgs;
 using System.Threading;
+using System.Globalization;
+using System.Deployment.Internal;
 
 namespace Tinfoil_Resource_Downloader
 {
@@ -40,62 +42,50 @@ namespace Tinfoil_Resource_Downloader
 
         }
 
-        private async void gameIdInputButton_Click(object sender, EventArgs e)
+        private async void GameIdInputButton_Click(object sender, EventArgs e)
         {
             var ID = gameIdInput.Text;
             bool IDCheck = Regex.IsMatch(ID, "^0100[0-9A-Z]{3}0[0-9A-Z]{5}000");
-            var url = "https://tinfoil.media/Title/ApiJson/";
+            var apiURL = "https://tinfoil.media/Title/ApiJson/";
 
-            if (IDCheck == false)
+            if (ConnectionsCheck(ID))
             {
-                Output.WriteLine("Failed ID Regex");
-                MessageBox.Show("Inputted ID is not valid", "Error");
-            }
-            else
-            {
-                Output.WriteLine("Passed ID Regex");
-                var checkedConn = true; //CheckForInternetConnection(url);
-                if (checkedConn)
+                if (IDCheck == false)
                 {
-
+                    Output.WriteLine("Failed ID Regex");
+                    MessageBox.Show("Inputted ID is not valid", "Error");
+                }
+                else
+                {
+                    Output.WriteLine("Passed ID Regex");
                     var httpClientHandler = new HttpClientHandler();
                     var httpClient = new HttpClient(httpClientHandler);
-                    httpClient.BaseAddress = new Uri(url);
+                    httpClient.BaseAddress = new Uri(apiURL);
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                    using (var response = httpClient.GetAsync(url))
+                    using (var response = httpClient.GetAsync(apiURL))
                     {
+                        Output.WriteLine("url " + apiURL);
+                        //Output.WriteLine("response " + response.Result.Content.ReadAsStringAsync().Result);
 
-                        if (response.Status == TaskStatus.Faulted)
-                        {
-                            MessageBox.Show("Your device was unable to connect to: " + url, "Error");
-                        }
-                        else
-                        {
+                        RootObject obj = JsonConvert.DeserializeObject<RootObject>(response.Result.Content.ReadAsStringAsync().Result);
+                        //Output.WriteLine("data " + obj.Data);
 
-                            Output.WriteLine("url " + url);
-                            //Output.WriteLine("response " + response.Result.Content.ReadAsStringAsync().Result);
-
-                            RootObject obj = JsonConvert.DeserializeObject<RootObject>(response.Result.Content.ReadAsStringAsync().Result);
-                            //Output.WriteLine("data " + obj.Data);
-
-                            Output.WriteLine("Finder " + JsonConvert.SerializeObject(obj.Data.Where(n => n.ID == ID).FirstOrDefault()));
-                            Output.WriteLine("ID " + ID);
+                        Output.WriteLine("Finder " + JsonConvert.SerializeObject(obj.Data.Where(n => n.ID == ID).FirstOrDefault()));
+                        Output.WriteLine("ID " + ID);
 
 
-                            var filtered = obj.Data.Where(n => n.ID == ID).FirstOrDefault();
-                            this.filteredAlt = filtered;
-                            Output.WriteLine("filtered " + filtered);
+                        var filtered = obj.Data.Where(n => n.ID == ID).FirstOrDefault();
+                        this.filteredAlt = filtered;
+                        Output.WriteLine("filtered " + filtered);
 
 
-                            LoadData(filtered);
-                            await LoadImages(filtered);
-                        }
-
+                        LoadData(filtered);
+                        await LoadImages(filtered);
                     }
                 }
-                else if (!checkedConn) MessageBox.Show("Your device was unable to connect to: " + url, "Error");
             }
+            else return;
         }
 
         private void LoadData(OBJData filtered)
@@ -124,13 +114,16 @@ namespace Tinfoil_Resource_Downloader
 
         private Task LoadImages(OBJData filtered)
         {
+            var imageURL = "https://tinfoil.media/ti/";
+            var bannerURL = "https://tinfoil.media/thi/";
+
             //Clear All Old Images
             filtered.Screenshots.Clear();
             filtered.NewIcon = null;
             filtered.Banner = null;
 
             //Icon
-            var iconRequest = WebRequest.Create("https://tinfoil.media/ti/" + filtered.ID + "/200/200/");
+            var iconRequest = WebRequest.Create(imageURL + filtered.ID + "/200/200/");
 
             using (var response = iconRequest.GetResponse())
             using (var stream = response.GetResponseStream())
@@ -138,10 +131,10 @@ namespace Tinfoil_Resource_Downloader
                 gameIcon.SizeMode = PictureBoxSizeMode.StretchImage;
                 gameIcon.Image = Image.FromStream(stream);
             }
-            filtered.NewIcon = "https://tinfoil.media/ti/" + filtered.ID + "/2000/2000/";
+            filtered.NewIcon = imageURL + filtered.ID + "/2000/2000/";
 
             //Banner
-            var bannerRequest = WebRequest.Create("https://tinfoil.media/thi/" + filtered.ID + "/1920/1080/");
+            var bannerRequest = WebRequest.Create(bannerURL + filtered.ID + "/1920/1080/");
 
             using (var response = bannerRequest.GetResponse())
             using (var stream = response.GetResponseStream())
@@ -149,7 +142,7 @@ namespace Tinfoil_Resource_Downloader
                 gameBanner.SizeMode = PictureBoxSizeMode.StretchImage;
                 gameBanner.Image = Image.FromStream(stream);
             }
-            filtered.Banner = "https://tinfoil.media/thi/" + filtered.ID + "/1920/1080/";
+            filtered.Banner = bannerURL + filtered.ID + "/1920/1080/";
 
             //Screenshots
             HtmlWeb web = new HtmlWeb();
@@ -193,31 +186,66 @@ namespace Tinfoil_Resource_Downloader
             }
         }
 
-        private void gameScreenshots_Click(object sender, EventArgs e)
+        private void GameScreenshots_Click(object sender, EventArgs e)
         {
             NextImage(filteredAlt);
             string combinedString = string.Join("\n", filteredAlt.Screenshots.ToArray());
             Output.WriteLine(filteredAlt.Screenshots.Count.ToString());
             Output.WriteLine(combinedString);
         }
-        public static bool CheckForInternetConnection(string url, int timeout = 10000)
+        public bool CheckForInternetConnection(string url, string ID, int timeout = 10000)
         {
-                try
-                {
-                    Ping myPing = new Ping();
-                    String host = url;
-                    byte[] buffer = new byte[32];
-                    PingOptions pingOptions = new PingOptions();
-                    PingReply reply = myPing.Send(host, timeout, buffer, pingOptions);
+            try
+            {
+                var request = (HttpWebRequest)WebRequest.Create(url);
+                request.KeepAlive = false;
+                request.Timeout = timeout;
+                using (var response = (HttpWebResponse)request.GetResponse())
+                    Output.WriteLine("Requesting Site: " + url + "\r\n Status: " + response.StatusCode);
                     return true;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        private async void downloadButton_Click(object sender, EventArgs e)
+        public bool ConnectionsCheck(string ID)
+        {
+            var apiURL = "https://tinfoil.media/Title/ApiJson/";
+            var mainURL = "https://tinfoil.io/Title/";
+            var imageURL = "https://tinfoil.media/ti/" + ID + "/200/200/";
+            var bannerURL = "https://tinfoil.media/thi/" + ID + "/1920/1080/";
+            var checkedConn1 = CheckForInternetConnection(apiURL, ID);
+            var checkedConn2 = CheckForInternetConnection(imageURL, ID);
+            var checkedConn3 = CheckForInternetConnection(bannerURL, ID);
+            var checkedConn4 = CheckForInternetConnection(mainURL, ID);
+
+            if (checkedConn1 == false)
+            {
+                MessageBox.Show("Your device was unable to connect to one of the APIs: \r\n" + apiURL, "Error");
+                return false;
+            } else if (checkedConn2 == false)
+            {
+                MessageBox.Show("Your device was unable to connect to one of the APIs: \r\n" + imageURL, "Error");
+                return false;
+            } else if (checkedConn3 == false)
+            {
+                MessageBox.Show("Your device was unable to connect to one of the APIs: \r\n" + bannerURL, "Error");
+                return false;
+            } else if (checkedConn4 == false)
+            {
+                MessageBox.Show("Your device was unable to connect to one of the APIs: \r\n" + mainURL, "Error");
+                return false;
+            }
+            else if (checkedConn1 && checkedConn2 && checkedConn3 && checkedConn4 == false)
+            {
+                MessageBox.Show("Your device was unable to connect to one or more of the APIs: \r\n" + apiURL + "\r\n" + imageURL + "\r\n" + bannerURL + "\r\n" + mainURL, "Error");
+                return false;
+            } else return true;
+        }
+
+        private async void DownloadButton_Click(object sender, EventArgs e)
         {
             //Directory Checks
             var dir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\Tinfoil Resource Downloader\";

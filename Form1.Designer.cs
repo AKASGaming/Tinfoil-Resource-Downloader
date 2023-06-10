@@ -95,7 +95,7 @@ namespace Tinfoil_Resource_Downloader
             this.gameIdInputButton.TabIndex = 4;
             this.gameIdInputButton.Text = "Search";
             this.gameIdInputButton.UseVisualStyleBackColor = true;
-            this.gameIdInputButton.Click += new System.EventHandler(this.gameIdInputButton_Click);
+            this.gameIdInputButton.Click += new System.EventHandler(this.GameIdInputButton_Click);
             // 
             // downloadType
             // 
@@ -127,7 +127,7 @@ namespace Tinfoil_Resource_Downloader
             this.gameScreenshots.Size = new System.Drawing.Size(426, 240);
             this.gameScreenshots.TabIndex = 7;
             this.gameScreenshots.TabStop = false;
-            this.gameScreenshots.Click += new System.EventHandler(this.gameScreenshots_Click);
+            this.gameScreenshots.Click += new System.EventHandler(this.GameScreenshots_Click);
             // 
             // downloadButton
             // 
@@ -137,7 +137,7 @@ namespace Tinfoil_Resource_Downloader
             this.downloadButton.TabIndex = 8;
             this.downloadButton.Text = "Download";
             this.downloadButton.UseVisualStyleBackColor = true;
-            this.downloadButton.Click += new System.EventHandler(this.downloadButton_Click);
+            this.downloadButton.Click += new System.EventHandler(this.DownloadButton_Click);
             // 
             // label1
             // 
