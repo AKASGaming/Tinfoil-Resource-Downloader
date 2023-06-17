@@ -49,27 +49,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleOutputLog.cs" />
-    <Compile Include="MainWindow.cs">
+    <Compile Include="Windows\MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainWindow.Designer.cs">
+    <Compile Include="Windows\MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StartWindow.cs">
+    <Compile Include="Windows\StartWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="StartWindow.Designer.cs">
+    <Compile Include="Windows\StartWindow.Designer.cs">
       <DependentUpon>StartWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="DownloadStatus.cs">
+    <Compile Include="Windows\DownloadStatus.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DownloadStatus.Designer.cs">
+    <Compile Include="Windows\DownloadStatus.Designer.cs">
       <DependentUpon>DownloadStatus.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="MainWindow.resx">
+    <EmbeddedResource Include="Windows\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -81,10 +81,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="StartWindow.resx">
+    <EmbeddedResource Include="Windows\StartWindow.resx">
       <DependentUpon>StartWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DownloadStatus.resx">
+    <EmbeddedResource Include="Windows\DownloadStatus.resx">
       <DependentUpon>DownloadStatus.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
@@ -122,6 +122,11 @@
     <PackageReference Include="Uno.UI">
       <Version>4.9.20</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="assets\Logo.ico" />
+    <Content Include="assets\Logo.png" />
+    <Content Include="Logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
