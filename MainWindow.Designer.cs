@@ -2,7 +2,7 @@
 
 namespace Tinfoil_Resource_Downloader
 {
-    partial class bannerLabel
+    partial class Window2
     {
         /// <summary>
         /// Required designer variable.
@@ -30,6 +30,7 @@ namespace Tinfoil_Resource_Downloader
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Window2));
             this.gameIcon = new System.Windows.Forms.PictureBox();
             this.gameIdInput = new System.Windows.Forms.TextBox();
             this.gameNameLabel = new System.Windows.Forms.Label();
@@ -41,16 +42,19 @@ namespace Tinfoil_Resource_Downloader
             this.downloadButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.screnshotsLabel = new System.Windows.Forms.Label();
-            this.downloadBar = new System.Windows.Forms.ProgressBar();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gameIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameBanner)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameScreenshots)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // gameIcon
             // 
             this.gameIcon.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.gameIcon.Location = new System.Drawing.Point(771, 99);
+            this.gameIcon.Location = new System.Drawing.Point(948, 59);
             this.gameIcon.Name = "gameIcon";
             this.gameIcon.Size = new System.Drawing.Size(200, 200);
             this.gameIcon.TabIndex = 0;
@@ -69,7 +73,7 @@ namespace Tinfoil_Resource_Downloader
             this.gameNameLabel.AutoSize = true;
             this.gameNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gameNameLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.gameNameLabel.Location = new System.Drawing.Point(768, 61);
+            this.gameNameLabel.Location = new System.Drawing.Point(945, 21);
             this.gameNameLabel.Name = "gameNameLabel";
             this.gameNameLabel.Size = new System.Drawing.Size(96, 17);
             this.gameNameLabel.TabIndex = 2;
@@ -80,7 +84,7 @@ namespace Tinfoil_Resource_Downloader
             // 
             this.gameIdLabel.AutoSize = true;
             this.gameIdLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.gameIdLabel.Location = new System.Drawing.Point(770, 78);
+            this.gameIdLabel.Location = new System.Drawing.Point(947, 38);
             this.gameIdLabel.Name = "gameIdLabel";
             this.gameIdLabel.Size = new System.Drawing.Size(49, 13);
             this.gameIdLabel.TabIndex = 3;
@@ -104,16 +108,17 @@ namespace Tinfoil_Resource_Downloader
             "Download All",
             "Download Icon",
             "Download Banner",
-            "Download Screenshots"});
+            "Download Screenshots",
+            "Download JSON File"});
             this.downloadType.Location = new System.Drawing.Point(35, 128);
             this.downloadType.Name = "downloadType";
-            this.downloadType.Size = new System.Drawing.Size(181, 56);
+            this.downloadType.Size = new System.Drawing.Size(181, 69);
             this.downloadType.TabIndex = 5;
             // 
             // gameBanner
             // 
             this.gameBanner.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.gameBanner.Location = new System.Drawing.Point(522, 310);
+            this.gameBanner.Location = new System.Drawing.Point(522, 293);
             this.gameBanner.Name = "gameBanner";
             this.gameBanner.Size = new System.Drawing.Size(640, 360);
             this.gameBanner.TabIndex = 6;
@@ -122,7 +127,7 @@ namespace Tinfoil_Resource_Downloader
             // gameScreenshots
             // 
             this.gameScreenshots.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.gameScreenshots.Location = new System.Drawing.Point(35, 376);
+            this.gameScreenshots.Location = new System.Drawing.Point(35, 352);
             this.gameScreenshots.Name = "gameScreenshots";
             this.gameScreenshots.Size = new System.Drawing.Size(426, 240);
             this.gameScreenshots.TabIndex = 7;
@@ -131,7 +136,7 @@ namespace Tinfoil_Resource_Downloader
             // 
             // downloadButton
             // 
-            this.downloadButton.Location = new System.Drawing.Point(35, 190);
+            this.downloadButton.Location = new System.Drawing.Point(35, 203);
             this.downloadButton.Name = "downloadButton";
             this.downloadButton.Size = new System.Drawing.Size(83, 24);
             this.downloadButton.TabIndex = 8;
@@ -143,7 +148,7 @@ namespace Tinfoil_Resource_Downloader
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(522, 291);
+            this.label1.Location = new System.Drawing.Point(522, 274);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(47, 13);
             this.label1.TabIndex = 9;
@@ -153,25 +158,52 @@ namespace Tinfoil_Resource_Downloader
             // 
             this.screnshotsLabel.AutoSize = true;
             this.screnshotsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.screnshotsLabel.Location = new System.Drawing.Point(32, 360);
+            this.screnshotsLabel.Location = new System.Drawing.Point(32, 336);
             this.screnshotsLabel.Name = "screnshotsLabel";
             this.screnshotsLabel.Size = new System.Drawing.Size(178, 13);
             this.screnshotsLabel.TabIndex = 9;
             this.screnshotsLabel.Text = "Screenshots (Click to change)";
             // 
-            // downloadBar
+            // pictureBox1
             // 
-            this.downloadBar.Location = new System.Drawing.Point(116, 191);
-            this.downloadBar.Name = "downloadBar";
-            this.downloadBar.Size = new System.Drawing.Size(100, 23);
-            this.downloadBar.TabIndex = 10;
+            this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(12, 12);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(85, 85);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 11;
+            this.pictureBox1.TabStop = false;
             // 
-            // bannerLabel
+            // label2
+            // 
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(100, 37);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(288, 25);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "Tinfoil Resource Downloader";
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(9, 660);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(133, 13);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "An app by @AKASGaming";
+            // 
+            // Window2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1174, 682);
-            this.Controls.Add(this.downloadBar);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.screnshotsLabel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.downloadButton);
@@ -183,12 +215,15 @@ namespace Tinfoil_Resource_Downloader
             this.Controls.Add(this.gameNameLabel);
             this.Controls.Add(this.gameIdInput);
             this.Controls.Add(this.gameIcon);
-            this.Name = "bannerLabel";
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(1190, 721);
+            this.Name = "Window2";
             this.Text = "Tinfoil Resource Downloader";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.gameIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameBanner)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameScreenshots)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -207,7 +242,9 @@ namespace Tinfoil_Resource_Downloader
         private System.Windows.Forms.Button downloadButton;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label screnshotsLabel;
-        private System.Windows.Forms.ProgressBar downloadBar;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
     }
 }
 

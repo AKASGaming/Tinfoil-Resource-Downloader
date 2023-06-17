@@ -16,7 +16,7 @@ namespace Tinfoil_Resource_Downloader
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new bannerLabel());
+            Application.Run(new StartWindow());
         }
     }
 }
