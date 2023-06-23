@@ -16,8 +16,6 @@ using System.Text.RegularExpressions;
 using Downloader;
 using System.ComponentModel;
 using DownloadProgressChangedEventArgs = Downloader.DownloadProgressChangedEventArgs;
-using AngleSharp.Io;
-using System.Drawing.Imaging;
 
 namespace Tinfoil_Resource_Downloader
 {
