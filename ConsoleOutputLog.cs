@@ -11,7 +11,7 @@ namespace Tinfoil_Resource_Downloader
 {
     public class Output
     {
-        private readonly string LogDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+        private readonly string LogDirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Tinfoil Resource Downloader" + @"\logs");
 
         private static Output _outputSingleton;
         private static Output OutputSingleton

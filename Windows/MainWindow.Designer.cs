@@ -45,6 +45,7 @@ namespace Tinfoil_Resource_Downloader
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.screenshotPosition = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gameIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameBanner)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameScreenshots)).BeginInit();
@@ -67,6 +68,7 @@ namespace Tinfoil_Resource_Downloader
             this.gameIdInput.Size = new System.Drawing.Size(100, 20);
             this.gameIdInput.TabIndex = 1;
             this.gameIdInput.Text = "Input Game ID";
+            this.gameIdInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.gameIdInput_KeyDown);
             // 
             // gameNameLabel
             // 
@@ -126,6 +128,7 @@ namespace Tinfoil_Resource_Downloader
             // 
             // gameScreenshots
             // 
+            this.gameScreenshots.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.gameScreenshots.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.gameScreenshots.Location = new System.Drawing.Point(35, 352);
             this.gameScreenshots.Name = "gameScreenshots";
@@ -156,6 +159,7 @@ namespace Tinfoil_Resource_Downloader
             // 
             // screnshotsLabel
             // 
+            this.screnshotsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.screnshotsLabel.AutoSize = true;
             this.screnshotsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.screnshotsLabel.Location = new System.Drawing.Point(32, 336);
@@ -196,11 +200,23 @@ namespace Tinfoil_Resource_Downloader
             this.label3.TabIndex = 13;
             this.label3.Text = "An app by @AKASGaming";
             // 
+            // screenshotPosition
+            // 
+            this.screenshotPosition.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.screenshotPosition.AutoSize = true;
+            this.screenshotPosition.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.screenshotPosition.Location = new System.Drawing.Point(225, 595);
+            this.screenshotPosition.Name = "screenshotPosition";
+            this.screenshotPosition.Size = new System.Drawing.Size(35, 13);
+            this.screenshotPosition.TabIndex = 14;
+            this.screenshotPosition.Text = "0 / 0";
+            // 
             // Window2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1174, 682);
+            this.Controls.Add(this.screenshotPosition);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.pictureBox1);
@@ -219,7 +235,6 @@ namespace Tinfoil_Resource_Downloader
             this.MinimumSize = new System.Drawing.Size(1190, 721);
             this.Name = "Window2";
             this.Text = "Tinfoil Resource Downloader";
-            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.gameIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameBanner)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameScreenshots)).EndInit();
@@ -245,6 +260,7 @@ namespace Tinfoil_Resource_Downloader
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label screenshotPosition;
     }
 }
 

@@ -16,8 +16,8 @@ using System.Text.RegularExpressions;
 using Downloader;
 using System.ComponentModel;
 using DownloadProgressChangedEventArgs = Downloader.DownloadProgressChangedEventArgs;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Windows.Threading;
+using AngleSharp.Io;
+using System.Drawing.Imaging;
 
 namespace Tinfoil_Resource_Downloader
 {
@@ -29,16 +29,13 @@ namespace Tinfoil_Resource_Downloader
         public EventHandler<AsyncCompletedEventArgs> OnDownloadFileCompleted { get; private set; }
         public DownloadStatus UserProgress { get; set; }
         public Form DownloadWindow { get; set; }
+        public bool running { get; set; }
 
 
         public Window2()
         {
             InitializeComponent();
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
+            label3.Text = label3.Text + "   v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         private async void GameIdInputButton_Click(object sender, EventArgs e)
@@ -47,7 +44,7 @@ namespace Tinfoil_Resource_Downloader
             bool IDCheck = Regex.IsMatch(ID, "^0100[0-9A-Z]{3}0[0-9A-Z]{5}000");
             var apiURL = "https://tinfoil.media/Title/ApiJson/";
 
-            if (ConnectionsCheck(ID))
+            if (await ConnectionsCheck(ID))
             {
                 if (IDCheck == false)
                 {
@@ -166,6 +163,8 @@ namespace Tinfoil_Resource_Downloader
                 gameScreenshots.Image = Image.FromStream(stream);
             }
 
+            screenshotPosition.Text = "1 / " + (filtered.Screenshots.Count - 1);
+
             Output.WriteLine(filtered.Screenshots.ToArray().ToString());
 
             return Task.CompletedTask;
@@ -175,6 +174,7 @@ namespace Tinfoil_Resource_Downloader
         {
             if (Initial == (filtered.Screenshots.Count - 1)) Initial = 0;
             var newImage = filtered.Screenshots[Initial++];
+            screenshotPosition.Text = Initial + " / " + (filtered.Screenshots.Count - 1);
 
             var ssRequest = WebRequest.Create(newImage);
             Output.WriteLine("New Image: " + newImage);
@@ -194,33 +194,30 @@ namespace Tinfoil_Resource_Downloader
             Output.WriteLine(filteredAlt.Screenshots.Count.ToString());
             Output.WriteLine(combinedString);
         }
-        public bool CheckForInternetConnection(string url, string ID, int timeout = 10000)
+        public async Task<bool> CheckForInternetConnection(string url, int timeout = 10000)
         {
-            try
+            var httpClient = new HttpClient();
+            HttpRequestMessage request = new HttpRequestMessage
             {
-                var request = (HttpWebRequest)WebRequest.Create(url);
-                request.KeepAlive = false;
-                request.Timeout = timeout;
-                using (var response = (HttpWebResponse)request.GetResponse())
-                    Output.WriteLine("Requesting Site: " + url + "\r\n Status: " + response.StatusCode);
-                    return true;
-            }
-            catch
-            {
-                return false;
-            }
+                RequestUri = new Uri(url),
+                Method = System.Net.Http.HttpMethod.Head // Not GET, but HEAD
+            };
+            httpClient.Timeout = TimeSpan.FromSeconds(timeout);
+            var result = await httpClient.SendAsync(request);
+            Output.WriteLine("Requesting Site: " + url + "\r\n Status: " + result.StatusCode);
+            return result.IsSuccessStatusCode;
         }
 
-        public bool ConnectionsCheck(string ID)
+        public async Task<bool> ConnectionsCheck(string ID)
         {
             var apiURL = "https://tinfoil.media/Title/ApiJson/";
             var mainURL = "https://tinfoil.io/Title/" + ID;
             var imageURL = "https://tinfoil.media/ti/" + ID + "/200/200/";
             var bannerURL = "https://tinfoil.media/thi/" + ID + "/1920/1080/";
-            var checkedConn1 = CheckForInternetConnection(apiURL, ID);
-            var checkedConn2 = CheckForInternetConnection(imageURL, ID);
-            var checkedConn3 = CheckForInternetConnection(bannerURL, ID);
-            var checkedConn4 = CheckForInternetConnection(mainURL, ID);
+            var checkedConn1 = await CheckForInternetConnection(apiURL);
+            var checkedConn2 = await CheckForInternetConnection(imageURL);
+            var checkedConn3 = await CheckForInternetConnection(bannerURL);
+            var checkedConn4 = await CheckForInternetConnection(mainURL);
 
             if (checkedConn1 == false)
             {
@@ -248,6 +245,13 @@ namespace Tinfoil_Resource_Downloader
 
         private async void DownloadButton_Click(object sender, EventArgs e)
         {
+            //Is Running Check
+            if (running)
+            {
+                MessageBox.Show("You may not start another download until your current one is finished!", "Error");
+                return;
+            }
+
             //Directory Checks
             var dir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\Tinfoil Resource Downloader\";
             if (!Directory.Exists(dir))
@@ -300,6 +304,7 @@ namespace Tinfoil_Resource_Downloader
                 return;
             }
 
+            Icon NewIcon = Icon.ExtractAssociatedIcon("./assets/Logo.ico");
 
             DownloadStatus downloadStatus = new DownloadStatus();
 
@@ -311,11 +316,13 @@ namespace Tinfoil_Resource_Downloader
                 MaximizeBox = false,
                 MinimizeBox = false,
                 ClientSize = downloadStatus.Size, //size the form to fit the content
-                //Icon = ;
+                Icon = NewIcon,
+                StartPosition = FormStartPosition.CenterScreen
             };
 
-
             DownloadWindow = window;
+            downloadStatus.SetWindow(window);
+            downloadStatus.GetParentWindow(this);
             window.Controls.Add(downloadStatus);
             downloadStatus.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             UserProgress = downloadStatus;
@@ -324,80 +331,86 @@ namespace Tinfoil_Resource_Downloader
             {
                 case "Download All":
                     Output.WriteLine("Downloading All Started");
-                    //MessageBox.Show("Downloading All Resources...", "Download Info");
                     window.Show(this);
+                    SetRunningState(true);
                     downloadStatus.UpdateStatus("Downloading All Resources...");
 
                     //Icon
+                    downloadStatus.UpdateIcon("Icon", "Downloading");
                     await SaveImageAsync(filteredAlt.NewIcon, (dir + filteredAlt.FolderFormatName + @"\Icon\Icon"), ".png", downloadStatus);
                     downloadStatus.UpdateStatus("Downloaded Icon! Now Downloading Banner...");
+                    downloadStatus.UpdateIcon("Icon", "Finished");
 
                     //Banner
+                    downloadStatus.UpdateIcon("Banner", "Downloading");
                     await SaveImageAsync(filteredAlt.Banner, (dir + filteredAlt.FolderFormatName + @"\Banner\Banner"), ".png", downloadStatus);
                     downloadStatus.UpdateStatus("Downloaded Banner! Now Downloading Screenshots...");
+                    downloadStatus.UpdateIcon("Banner", "Finished");
 
                     //Screenshots
+                    downloadStatus.UpdateIcon("Screenshots", "Downloading");
                     foreach (var picture in filteredAlt.Screenshots.Select((value, i) => new { i, value }))
                     {
                         await SaveImageAsync(picture.value, (dir + filteredAlt.FolderFormatName + @"\Screenshots\Screenshot-" + (picture.i + 1)), ".png", downloadStatus);
                     }
                     downloadStatus.UpdateStatus("Downloaded All Screenshots! Now Downloading JSON File...");
+                    downloadStatus.UpdateIcon("Screenshots", "Finished");
 
                     //JSON
-                    File.WriteAllText((dir + filteredAlt.FolderFormatName + @"\" + filteredAlt.FormattedName + ".json"), json);
-                    downloadStatus.UpdateStatus("All Resources Downloaded!");
+                    downloadStatus.UpdateIcon("JSON", "Downloading");
+                    File.WriteAllText((dir + filteredAlt.FolderFormatName + @"\" + filteredAlt.FolderFormatName + ".json"), json);
                     Output.WriteLine("Downloaded All");
+                    downloadStatus.UpdateIcon("JSON", "Finished");
+                    downloadStatus.UpdateStatus("All Resources Downloaded!");
                     downloadStatus.UpdateButton(true);
-
-
-                    //MessageBox.Show("Download Complete!", "Download Info");
                     break;
                 case "Download Icon":
+                    window.Show(this);
+                    SetRunningState(true);
                     Output.WriteLine("Downloading Icon Started");
-                    //MessageBox.Show("Downloading Icon...", "Download Info"); 
+                    downloadStatus.UpdateIcon("Icon", "Downloading");
                     await SaveImageAsync(filteredAlt.NewIcon, (dir + filteredAlt.FolderFormatName + @"\Icon\Icon"), ".png", downloadStatus);
                     Output.WriteLine("Downloaded Icon");
-                    //MessageBox.Show("Download Complete!", "Download Info");
+                    downloadStatus.UpdateStatus("Downloaded Icon!");
+                    downloadStatus.UpdateIcon("Icon", "Finished");
+                    downloadStatus.UpdateButton(true);
                     break;
                 case "Download Banner":
+                    window.Show(this);
+                    SetRunningState(true);
                     Output.WriteLine("Downloading Banner Started");
-                    //MessageBox.Show("Downloading Banner...", "Download Info"); 
+                    downloadStatus.UpdateIcon("Banner", "Downloading");
                     await SaveImageAsync(filteredAlt.Banner, (dir + filteredAlt.FolderFormatName + @"\Banner\Banner"), ".png", downloadStatus);
                     Output.WriteLine("Downloaded Banner");
-                    //MessageBox.Show("Download Complete!", "Download Info");
+                    downloadStatus.UpdateStatus("Downloaded Banner!");
+                    downloadStatus.UpdateIcon("Banner", "Finished");
+                    downloadStatus.UpdateButton(true);
                     break;
                 case "Download JSON File":
                     window.Show(this);
+                    SetRunningState(true);
                     downloadStatus.UpdateStatus("Now Downloading JSON File...");
+                    downloadStatus.UpdateIcon("JSON", "Downloading");
                     Output.WriteLine("Generating JSON File");
-                    //MessageBox.Show("Generating JSON File...", "Download Info");
-                    File.WriteAllText((dir + filteredAlt.FolderFormatName + @"\" + filteredAlt.FormattedName + ".json"), json);
+                    File.WriteAllText((dir + filteredAlt.FolderFormatName + @"\" + filteredAlt.FolderFormatName + ".json"), json);
                     Output.WriteLine("Downloaded JSON");
                     downloadStatus.UpdateStatus("Downloaded JSON!");
+                    downloadStatus.UpdateIcon("JSON", "Finished");
                     downloadStatus.UpdateButton(true);
-                    //MessageBox.Show("Download Complete!", "Download Info");
                     break;
                 case "Download Screenshots":
+                    window.Show(this);
+                    SetRunningState(true);
                     Output.WriteLine("Downloading Screenshots Started");
-                    //MessageBox.Show("Downloading All Screenshots...", "Download Info"); 
+                    downloadStatus.UpdateIcon("Screenshots", "Downloading");
                     foreach (var picture in filteredAlt.Screenshots.Select((value, i) => new { i, value }))
                     {
                         await SaveImageAsync(picture.value, (dir + filteredAlt.FolderFormatName + @"\Screenshots\Screenshot-" + (picture.i + 1)), ".png", downloadStatus);
                     }
                     Output.WriteLine("Downloaded Screenshots");
-                    //MessageBox.Show("Download Complete!", "Download Info");
-                    break;
-                default:
-                    Output.WriteLine("Downloading All Started");
-                    //MessageBox.Show("Downloading All Resources...", "Download Info"); 
-                    await SaveImageAsync(filteredAlt.NewIcon, (dir + filteredAlt.FolderFormatName + @"\Icon\Icon"), ".png", downloadStatus);
-                    await SaveImageAsync(filteredAlt.Banner, (dir + filteredAlt.FolderFormatName + @"\Banner\Banner"), ".png", downloadStatus);
-                    foreach (var picture in filteredAlt.Screenshots.Select((value, i) => new { i, value }))
-                    {
-                        await SaveImageAsync(picture.value, (dir + filteredAlt.FolderFormatName + @"\Screenshots\Screenshot-" + (picture.i + 1)), ".png", downloadStatus);
-                    }
-                    Output.WriteLine("Downloaded All");
-                    //MessageBox.Show("Download Complete!", "Download Info");
+                    downloadStatus.UpdateStatus("Downloaded Screenshots!");
+                    downloadStatus.UpdateIcon("Screenshots", "Finished");
+                    downloadStatus.UpdateButton(true);
                     break;
             }
         }
@@ -406,17 +419,11 @@ namespace Tinfoil_Resource_Downloader
         {
             var downloadOpt = new DownloadConfiguration()
             {
-                // usually, hosts support max to 8000 bytes, default values is 8000
                 BufferBlockSize = 10240,
-                // file parts to download, default value is 1
                 ChunkCount = 8,
-                // the maximum number of times to fail
                 MaxTryAgainOnFailover = 5,
-                // timeout (millisecond) per stream block reader, default values is 1000
                 Timeout = 1000,
-                // clear package chunks data when download completed with failure, default value is false
                 ClearPackageOnCompletionWithFailure = true,
-
             };
             var downloader = new DownloadService(downloadOpt);
             downloader.DownloadProgressChanged += ProgressChanged;
@@ -452,9 +459,9 @@ namespace Tinfoil_Resource_Downloader
             return output;
         }
 
-        public void CloseDownloadWindow()
+        public void SetRunningState(bool state)
         {
-            DownloadWindow.Close();
+            running = state;
         }
     }
 
@@ -493,7 +500,6 @@ namespace Tinfoil_Resource_Downloader
         public string TinfoilSite { get; set; }
 
     }
-
 
     public class RootObject
     {
