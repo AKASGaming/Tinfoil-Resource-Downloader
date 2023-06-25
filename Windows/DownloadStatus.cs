@@ -112,7 +112,7 @@ namespace Tinfoil_Resource_Downloader
 
         public void UpdateStatus(string message)
         {
-            this.Log.Add(string.Format("{0} - {1}", DateTime.Now, message));
+            this.Log.Add(string.Format("[{0}] - {1}", DateTime.Now, message));
             Output.WriteLine(message);
             StringBuilder result = new StringBuilder();
             foreach (string s in this.Log)

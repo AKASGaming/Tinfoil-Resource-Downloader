@@ -34,6 +34,8 @@ namespace Tinfoil_Resource_Downloader
         {
             InitializeComponent();
             label3.Text = label3.Text + "   v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            downloadType.Enabled = false;
+            downloadButton.Enabled = false;
         }
 
         private async void GameIdInputButton_Click(object sender, EventArgs e)
@@ -42,15 +44,12 @@ namespace Tinfoil_Resource_Downloader
             bool IDCheck = Regex.IsMatch(ID, "^0100[0-9A-Z]{3}0[0-9A-Z]{5}000");
             var apiURL = "https://tinfoil.media/Title/ApiJson/";
 
-            if (await ConnectionsCheck(ID))
+            if (IDCheck == false)
             {
-                if (IDCheck == false)
-                {
-                    Output.WriteLine("Failed ID Regex");
-                    MessageBox.Show("Inputted ID is not valid", "Error");
-                }
-                else
-                {
+                Output.WriteLine("Failed ID Regex");
+                MessageBox.Show("Inputted ID is not valid", "Error");
+            } else if (await ConnectionsCheck(ID))
+            {
                     Output.WriteLine("Passed ID Regex");
                     var httpClientHandler = new HttpClientHandler();
                     var httpClient = new HttpClient(httpClientHandler);
@@ -76,9 +75,10 @@ namespace Tinfoil_Resource_Downloader
 
                         LoadData(filtered);
                         await LoadImages(filtered);
+                        downloadButton.Enabled = true;
+                        downloadType.Enabled = true;
                     }
                 }
-            }
             else return;
         }
 
@@ -161,9 +161,9 @@ namespace Tinfoil_Resource_Downloader
                 gameScreenshots.Image = Image.FromStream(stream);
             }
 
-            screenshotPosition.Text = "1 / " + (filtered.Screenshots.Count - 1);
+            screenshotPosition.Text = "1 / " + filtered.Screenshots.Count;
 
-            Output.WriteLine(filtered.Screenshots.ToArray().ToString());
+            //Output.WriteLine(filtered.Screenshots.ToArray().ToString());
 
             return Task.CompletedTask;
         }
@@ -172,9 +172,9 @@ namespace Tinfoil_Resource_Downloader
         {
             if (Initial == (filtered.Screenshots.Count - 1)) Initial = 0;
             var newImage = filtered.Screenshots[Initial++];
-            screenshotPosition.Text = Initial + " / " + (filtered.Screenshots.Count - 1);
+            screenshotPosition.Text = Initial + " / " + filtered.Screenshots.Count;
 
-            var ssRequest = WebRequest.Create(newImage);
+            var ssRequest = WebRequest.Create(newImage); //Change WebRequest to HttpClient genius
             Output.WriteLine("New Image: " + newImage);
 
             using (var response = ssRequest.GetResponse())
@@ -188,9 +188,9 @@ namespace Tinfoil_Resource_Downloader
         private void GameScreenshots_Click(object sender, EventArgs e)
         {
             NextImage(filteredAlt);
-            string combinedString = string.Join("\n", filteredAlt.Screenshots.ToArray());
+            //string combinedString = string.Join("\n", filteredAlt.Screenshots.ToArray());
             Output.WriteLine(filteredAlt.Screenshots.Count.ToString());
-            Output.WriteLine(combinedString);
+            //Output.WriteLine(combinedString);
         }
         public async Task<bool> CheckForInternetConnection(string url, int timeout = 10000)
         {
@@ -198,7 +198,7 @@ namespace Tinfoil_Resource_Downloader
             HttpRequestMessage request = new HttpRequestMessage
             {
                 RequestUri = new Uri(url),
-                Method = System.Net.Http.HttpMethod.Head // Not GET, but HEAD
+                Method = HttpMethod.Head // Not GET, but HEAD
             };
             httpClient.Timeout = TimeSpan.FromSeconds(timeout);
             var result = await httpClient.SendAsync(request);
@@ -313,6 +313,7 @@ namespace Tinfoil_Resource_Downloader
                 FormBorderStyle = FormBorderStyle.Fixed3D, //Disables user resizing
                 MaximizeBox = false,
                 MinimizeBox = false,
+                ControlBox = false,
                 ClientSize = downloadStatus.Size, //size the form to fit the content
                 Icon = NewIcon,
                 StartPosition = FormStartPosition.CenterScreen
@@ -351,11 +352,12 @@ namespace Tinfoil_Resource_Downloader
                     {
                         await SaveImageAsync(picture.value, (dir + filteredAlt.FolderFormatName + @"\Screenshots\Screenshot-" + (picture.i + 1)), ".png", downloadStatus);
                     }
-                    downloadStatus.UpdateStatus("Downloaded All Screenshots! Now Downloading JSON File...");
+                    downloadStatus.UpdateStatus("Downloaded All Screenshots! Now Generating JSON File...");
                     downloadStatus.UpdateIcon("Screenshots", "Finished");
 
                     //JSON
                     downloadStatus.UpdateIcon("JSON", "Downloading");
+                    downloadStatus.UpdateStatus("Generating \"" + (dir + filteredAlt.FolderFormatName + @"\" + filteredAlt.FolderFormatName + ".json") + "\"...");
                     File.WriteAllText((dir + filteredAlt.FolderFormatName + @"\" + filteredAlt.FolderFormatName + ".json"), json);
                     Output.WriteLine("Downloaded All");
                     downloadStatus.UpdateIcon("JSON", "Finished");
@@ -390,6 +392,7 @@ namespace Tinfoil_Resource_Downloader
                     downloadStatus.UpdateStatus("Now Downloading JSON File...");
                     downloadStatus.UpdateIcon("JSON", "Downloading");
                     Output.WriteLine("Generating JSON File");
+                    downloadStatus.UpdateStatus("Generating \"" + (dir + filteredAlt.FolderFormatName + @"\" + filteredAlt.FolderFormatName + ".json") + "\"...");
                     File.WriteAllText((dir + filteredAlt.FolderFormatName + @"\" + filteredAlt.FolderFormatName + ".json"), json);
                     Output.WriteLine("Downloaded JSON");
                     downloadStatus.UpdateStatus("Downloaded JSON!");
