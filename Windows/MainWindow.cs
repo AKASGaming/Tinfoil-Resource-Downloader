@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -23,7 +22,7 @@ namespace Tinfoil_Resource_Downloader
     {
         public OBJData filteredAlt { get; private set; }
         public int Initial { get; private set; }
-        public EventHandler<Downloader.DownloadProgressChangedEventArgs> OnDownloadProgressChanged { get; private set; }
+        public EventHandler<DownloadProgressChangedEventArgs> OnDownloadProgressChanged { get; private set; }
         public EventHandler<AsyncCompletedEventArgs> OnDownloadFileCompleted { get; private set; }
         public DownloadStatus UserProgress { get; set; }
         public Form DownloadWindow { get; set; }
@@ -33,13 +32,15 @@ namespace Tinfoil_Resource_Downloader
         public Window2()
         {
             InitializeComponent();
-            label3.Text = label3.Text + "   v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            this.Text = this.Text + " - v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             downloadType.Enabled = false;
             downloadButton.Enabled = false;
+            gameScreenshots.Enabled = false;
         }
 
         private async void GameIdInputButton_Click(object sender, EventArgs e)
         {
+            gameIdInputButton.Enabled = false;
             var ID = gameIdInput.Text;
             bool IDCheck = Regex.IsMatch(ID, "^0100[0-9A-Z]{3}0[0-9A-Z]{5}000");
             var apiURL = "https://tinfoil.media/Title/ApiJson/";
@@ -48,6 +49,7 @@ namespace Tinfoil_Resource_Downloader
             {
                 Output.WriteLine("Failed ID Regex");
                 MessageBox.Show("Inputted ID is not valid", "Error");
+                gameIdInputButton.Enabled = true;
             } else if (await ConnectionsCheck(ID))
             {
                     Output.WriteLine("Passed ID Regex");
@@ -77,6 +79,8 @@ namespace Tinfoil_Resource_Downloader
                         await LoadImages(filtered);
                         downloadButton.Enabled = true;
                         downloadType.Enabled = true;
+                        gameScreenshots.Enabled = true;
+                        gameIdInputButton.Enabled = true;
                     }
                 }
             else return;
@@ -108,10 +112,11 @@ namespace Tinfoil_Resource_Downloader
 
         }
 
-        private Task LoadImages(OBJData filtered)
+        private async Task LoadImages(OBJData filtered)
         {
             var imageURL = "https://tinfoil.media/ti/";
             var bannerURL = "https://tinfoil.media/thi/";
+            var client = new HttpClient();
 
             //Clear All Old Images
             filtered.Screenshots.Clear();
@@ -119,10 +124,11 @@ namespace Tinfoil_Resource_Downloader
             filtered.Banner = null;
 
             //Icon
-            var iconRequest = WebRequest.Create(imageURL + filtered.ID + "/200/200/");
+            
+            var iconRequest = await client.GetAsync(imageURL + filtered.ID + "/200/200/");
 
-            using (var response = iconRequest.GetResponse())
-            using (var stream = response.GetResponseStream())
+            using (var response = iconRequest.Content)
+            using (var stream = await response.ReadAsStreamAsync())
             {
                 gameIcon.SizeMode = PictureBoxSizeMode.StretchImage;
                 gameIcon.Image = Image.FromStream(stream);
@@ -130,10 +136,10 @@ namespace Tinfoil_Resource_Downloader
             filtered.NewIcon = imageURL + filtered.ID + "/2000/2000/";
 
             //Banner
-            var bannerRequest = WebRequest.Create(bannerURL + filtered.ID + "/1920/1080/");
+            var bannerRequest = await client.GetAsync(bannerURL + filtered.ID + "/1920/1080/");
 
-            using (var response = bannerRequest.GetResponse())
-            using (var stream = response.GetResponseStream())
+            using (var response = bannerRequest.Content)
+            using (var stream = await response.ReadAsStreamAsync())
             {
                 gameBanner.SizeMode = PictureBoxSizeMode.StretchImage;
                 gameBanner.Image = Image.FromStream(stream);
@@ -152,10 +158,10 @@ namespace Tinfoil_Resource_Downloader
             filtered.Screenshots.Distinct().ToList();
 
             Output.WriteLine(filtered.Screenshots.First());
-            var ssRequest = WebRequest.Create(filtered.Screenshots.First());
+            var ssRequest = await client.GetAsync(filtered.Screenshots.First());
 
-            using (var response = ssRequest.GetResponse())
-            using (var stream = response.GetResponseStream())
+            using (var response = ssRequest.Content)
+            using (var stream = await response.ReadAsStreamAsync())
             {
                 gameScreenshots.SizeMode = PictureBoxSizeMode.StretchImage;
                 gameScreenshots.Image = Image.FromStream(stream);
@@ -164,21 +170,21 @@ namespace Tinfoil_Resource_Downloader
             screenshotPosition.Text = "1 / " + filtered.Screenshots.Count;
 
             //Output.WriteLine(filtered.Screenshots.ToArray().ToString());
-
-            return Task.CompletedTask;
         }
 
-        private void NextImage(OBJData filtered)
+        private async void NextImage(OBJData filtered)
         {
             if (Initial == (filtered.Screenshots.Count - 1)) Initial = 0;
             var newImage = filtered.Screenshots[Initial++];
             screenshotPosition.Text = Initial + " / " + filtered.Screenshots.Count;
 
-            var ssRequest = WebRequest.Create(newImage); //Change WebRequest to HttpClient genius
-            Output.WriteLine("New Image: " + newImage);
+            var client = new HttpClient();
+            var ssRequest = await client.GetAsync(newImage);
 
-            using (var response = ssRequest.GetResponse())
-            using (var stream = response.GetResponseStream())
+            //Output.WriteLine("New Image: " + newImage);
+
+            using (var response = ssRequest.Content)
+            using (var stream = await response.ReadAsStreamAsync())
             {
                 gameScreenshots.SizeMode = PictureBoxSizeMode.StretchImage;
                 gameScreenshots.Image = Image.FromStream(stream);

@@ -9,9 +9,10 @@ namespace Tinfoil_Resource_Downloader
         {
             InitializeComponent();
             richTextBox1.SelectionAlignment = HorizontalAlignment.Center;
+            this.Text = this.Text + " - v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
-        private void continueButton_Click(object sender, EventArgs e)
+        private void ContinueButton_Click(object sender, EventArgs e)
         {
             this.Hide();
             var form2 = new Window2();

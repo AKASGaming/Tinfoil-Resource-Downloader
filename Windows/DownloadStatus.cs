@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text;
-using System.Windows;
 using System.Windows.Forms;
 using Tinfoil_Resource_Downloader.Properties;
 
@@ -14,8 +13,21 @@ namespace Tinfoil_Resource_Downloader
 
 
         public List<string> Log = new List<string>();
+
         public Form Window2 { get; set; }
-        public Window2 Parent { get; set; }
+
+        private Window2 parent;
+
+        public Window2 GetParent()
+        {
+            return parent;
+        }
+
+        public void SetParent(Window2 value)
+        {
+            parent = value;
+        }
+
         public bool Clicked {  get; set; }
 
         public DownloadStatus()
@@ -124,12 +136,12 @@ namespace Tinfoil_Resource_Downloader
 
         public void SetRunningStatus()
         {
-            Parent.running = false;
+            GetParent().running = false;
         }
 
         public void GetParentWindow(Window2 window)
         {
-            Parent = window;
+            SetParent(window);
         }
 
         public void Button1_Click(object sender, EventArgs e)

@@ -80,7 +80,7 @@
             this.continueButton.TabIndex = 2;
             this.continueButton.Text = "Click to Continue";
             this.continueButton.UseVisualStyleBackColor = true;
-            this.continueButton.Click += new System.EventHandler(this.continueButton_Click);
+            this.continueButton.Click += new System.EventHandler(this.ContinueButton_Click);
             // 
             // label3
             // 
