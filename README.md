@@ -16,7 +16,7 @@ Tested on Windows 10 & Windows 11
 ![Opening Window](https://github.com/AKASGaming/Tinfoil-Resource-Downloader/assets/25405047/e02a4b10-fa19-4870-a5d2-ab814034bc0f)
 
 ### Main App
-![Main App](https://github.com/AKASGaming/Tinfoil-Resource-Downloader/assets/25405047/8bb4a0b1-b9d6-40a0-8054-f890a7ca1eda)
+![Main App](https://github.com/AKASGaming/Tinfoil-Resource-Downloader/assets/25405047/93ffc9be-d7d5-44bf-ba00-edf538e91aa0)
 
 
 ### Desktop Icon
@@ -24,13 +24,14 @@ Tested on Windows 10 & Windows 11
 
 
 ### Demo
-![Demo](https://github.com/AKASGaming/Tinfoil-Resource-Downloader/assets/25405047/d5bca729-2885-4e49-b41c-c94938e8974d)
+![Demo](https://github.com/AKASGaming/Tinfoil-Resource-Downloader/assets/25405047/701d9a0f-11d5-4a72-8ee4-fd96173fe09c)
+
 
 ### Download Window
 ![Download Window In Progress](https://github.com/AKASGaming/Tinfoil-Resource-Downloader/assets/25405047/57e173c7-de4a-4580-8256-6397e3668022)
 ![Download Finished](https://github.com/AKASGaming/Tinfoil-Resource-Downloader/assets/25405047/ab2916c0-89a4-41ad-a166-63f58abd54a4)
 
 ### Download Location
-![Download Location](https://user-images.githubusercontent.com/25405047/213881494-8bf2fa65-9262-4d64-b7a4-4df31493b681.png)
+![Download Location](https://github.com/AKASGaming/Tinfoil-Resource-Downloader/assets/25405047/157e2af6-4c54-44a9-a9b5-e2716d3ba2f9)
 
 ## If anyone would like to help out, feel free to do a PR, I'll take a look at it and most likely merge it!  Currently I'm trying to find a good and easy interface for this entire thing.
