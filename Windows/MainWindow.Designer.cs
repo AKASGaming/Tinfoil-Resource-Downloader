@@ -46,6 +46,18 @@ namespace Tinfoil_Resource_Downloader
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.screenshotPosition = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.gameRelease = new System.Windows.Forms.Label();
+            this.gamePublisher = new System.Windows.Forms.Label();
+            this.gameSize = new System.Windows.Forms.Label();
+            this.gameIco = new System.Windows.Forms.Label();
+            this.gameBan = new System.Windows.Forms.Label();
+            this.gameURL = new System.Windows.Forms.Label();
+            this.gameURL1 = new System.Windows.Forms.LinkLabel();
+            this.gameBan1 = new System.Windows.Forms.LinkLabel();
+            this.gameIco1 = new System.Windows.Forms.LinkLabel();
+            this.downloadedLabel = new System.Windows.Forms.Label();
+            this.YN = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gameIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameBanner)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameScreenshots)).BeginInit();
@@ -55,7 +67,7 @@ namespace Tinfoil_Resource_Downloader
             // gameIcon
             // 
             this.gameIcon.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.gameIcon.Location = new System.Drawing.Point(948, 59);
+            this.gameIcon.Location = new System.Drawing.Point(522, 50);
             this.gameIcon.Name = "gameIcon";
             this.gameIcon.Size = new System.Drawing.Size(200, 200);
             this.gameIcon.TabIndex = 0;
@@ -65,7 +77,7 @@ namespace Tinfoil_Resource_Downloader
             // 
             this.gameIdInput.Location = new System.Drawing.Point(35, 99);
             this.gameIdInput.Name = "gameIdInput";
-            this.gameIdInput.Size = new System.Drawing.Size(100, 20);
+            this.gameIdInput.Size = new System.Drawing.Size(100, 22);
             this.gameIdInput.TabIndex = 1;
             this.gameIdInput.Text = "Input Game ID";
             this.gameIdInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.gameIdInput_KeyDown);
@@ -75,22 +87,22 @@ namespace Tinfoil_Resource_Downloader
             this.gameNameLabel.AutoSize = true;
             this.gameNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gameNameLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.gameNameLabel.Location = new System.Drawing.Point(945, 21);
+            this.gameNameLabel.Location = new System.Drawing.Point(522, 12);
             this.gameNameLabel.Name = "gameNameLabel";
-            this.gameNameLabel.Size = new System.Drawing.Size(96, 17);
+            this.gameNameLabel.Size = new System.Drawing.Size(106, 17);
             this.gameNameLabel.TabIndex = 2;
-            this.gameNameLabel.Text = "Game Name";
+            this.gameNameLabel.Text = "Game Name: ";
             this.gameNameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // gameIdLabel
             // 
             this.gameIdLabel.AutoSize = true;
             this.gameIdLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.gameIdLabel.Location = new System.Drawing.Point(947, 38);
+            this.gameIdLabel.Location = new System.Drawing.Point(522, 29);
             this.gameIdLabel.Name = "gameIdLabel";
-            this.gameIdLabel.Size = new System.Drawing.Size(49, 13);
+            this.gameIdLabel.Size = new System.Drawing.Size(56, 13);
             this.gameIdLabel.TabIndex = 3;
-            this.gameIdLabel.Text = "Game ID";
+            this.gameIdLabel.Text = "Game ID: ";
             this.gameIdLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // gameIdInputButton
@@ -196,7 +208,7 @@ namespace Tinfoil_Resource_Downloader
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(9, 660);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(133, 13);
+            this.label3.Size = new System.Drawing.Size(139, 13);
             this.label3.TabIndex = 13;
             this.label3.Text = "An app by @AKASGaming";
             // 
@@ -211,11 +223,129 @@ namespace Tinfoil_Resource_Downloader
             this.screenshotPosition.TabIndex = 14;
             this.screenshotPosition.Text = "0 / 0";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label4.Location = new System.Drawing.Point(737, 50);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(81, 17);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "More Info:";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // gameRelease
+            // 
+            this.gameRelease.AutoSize = true;
+            this.gameRelease.Location = new System.Drawing.Point(737, 67);
+            this.gameRelease.Name = "gameRelease";
+            this.gameRelease.Size = new System.Drawing.Size(79, 13);
+            this.gameRelease.TabIndex = 16;
+            this.gameRelease.Text = "Release Date: ";
+            // 
+            // gamePublisher
+            // 
+            this.gamePublisher.AutoSize = true;
+            this.gamePublisher.Location = new System.Drawing.Point(737, 80);
+            this.gamePublisher.Name = "gamePublisher";
+            this.gamePublisher.Size = new System.Drawing.Size(61, 13);
+            this.gamePublisher.TabIndex = 17;
+            this.gamePublisher.Text = "Publisher: ";
+            // 
+            // gameSize
+            // 
+            this.gameSize.AutoSize = true;
+            this.gameSize.Location = new System.Drawing.Point(737, 93);
+            this.gameSize.Name = "gameSize";
+            this.gameSize.Size = new System.Drawing.Size(65, 13);
+            this.gameSize.TabIndex = 18;
+            this.gameSize.Text = "Game Size: ";
+            // 
+            // gameIco
+            // 
+            this.gameIco.AutoSize = true;
+            this.gameIco.Location = new System.Drawing.Point(737, 106);
+            this.gameIco.Name = "gameIco";
+            this.gameIco.Size = new System.Drawing.Size(58, 13);
+            this.gameIco.TabIndex = 19;
+            this.gameIco.Text = "Icon URL: ";
+            // 
+            // gameBan
+            // 
+            this.gameBan.AutoSize = true;
+            this.gameBan.Location = new System.Drawing.Point(737, 119);
+            this.gameBan.Name = "gameBan";
+            this.gameBan.Size = new System.Drawing.Size(72, 13);
+            this.gameBan.TabIndex = 20;
+            this.gameBan.Text = "Banner URL: ";
+            // 
+            // gameURL
+            // 
+            this.gameURL.AutoSize = true;
+            this.gameURL.Location = new System.Drawing.Point(737, 132);
+            this.gameURL.Name = "gameURL";
+            this.gameURL.Size = new System.Drawing.Size(93, 13);
+            this.gameURL.TabIndex = 21;
+            this.gameURL.Text = "Tinfoil Info URL: ";
+            // 
+            // gameURL1
+            // 
+            this.gameURL1.AutoSize = true;
+            this.gameURL1.Location = new System.Drawing.Point(836, 132);
+            this.gameURL1.Name = "gameURL1";
+            this.gameURL1.Size = new System.Drawing.Size(0, 13);
+            this.gameURL1.TabIndex = 22;
+            // 
+            // gameBan1
+            // 
+            this.gameBan1.AutoSize = true;
+            this.gameBan1.Location = new System.Drawing.Point(815, 119);
+            this.gameBan1.Name = "gameBan1";
+            this.gameBan1.Size = new System.Drawing.Size(0, 13);
+            this.gameBan1.TabIndex = 23;
+            // 
+            // gameIco1
+            // 
+            this.gameIco1.AutoSize = true;
+            this.gameIco1.Location = new System.Drawing.Point(801, 106);
+            this.gameIco1.Name = "gameIco1";
+            this.gameIco1.Size = new System.Drawing.Size(0, 13);
+            this.gameIco1.TabIndex = 24;
+            // 
+            // downloadedLabel
+            // 
+            this.downloadedLabel.AutoSize = true;
+            this.downloadedLabel.Location = new System.Drawing.Point(737, 145);
+            this.downloadedLabel.Name = "downloadedLabel";
+            this.downloadedLabel.Size = new System.Drawing.Size(80, 13);
+            this.downloadedLabel.TabIndex = 25;
+            this.downloadedLabel.Text = "Downloaded: ";
+            // 
+            // YN
+            // 
+            this.YN.AutoSize = true;
+            this.YN.Location = new System.Drawing.Point(815, 145);
+            this.YN.Name = "YN";
+            this.YN.Size = new System.Drawing.Size(0, 13);
+            this.YN.TabIndex = 26;
+            // 
             // Window2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1174, 682);
+            this.Controls.Add(this.YN);
+            this.Controls.Add(this.downloadedLabel);
+            this.Controls.Add(this.gameIco1);
+            this.Controls.Add(this.gameBan1);
+            this.Controls.Add(this.gameURL1);
+            this.Controls.Add(this.gameURL);
+            this.Controls.Add(this.gameBan);
+            this.Controls.Add(this.gameIco);
+            this.Controls.Add(this.gameSize);
+            this.Controls.Add(this.gamePublisher);
+            this.Controls.Add(this.gameRelease);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.screenshotPosition);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -261,6 +391,18 @@ namespace Tinfoil_Resource_Downloader
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label screenshotPosition;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label gameRelease;
+        private System.Windows.Forms.Label gamePublisher;
+        private System.Windows.Forms.Label gameSize;
+        private System.Windows.Forms.Label gameIco;
+        private System.Windows.Forms.Label gameBan;
+        private System.Windows.Forms.Label gameURL;
+        private System.Windows.Forms.LinkLabel gameURL1;
+        private System.Windows.Forms.LinkLabel gameBan1;
+        private System.Windows.Forms.LinkLabel gameIco1;
+        private System.Windows.Forms.Label downloadedLabel;
+        private System.Windows.Forms.Label YN;
     }
 }
 

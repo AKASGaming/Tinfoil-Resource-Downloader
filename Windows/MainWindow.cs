@@ -93,23 +93,44 @@ namespace Tinfoil_Resource_Downloader
             var reggex = ("<a href=" + '"' + "/Title/" + GameID + '"' + ">");
             var GameNameFormatted = GameName.Replace(reggex, String.Empty);
             var GameNameFolderFormat = CharachterCleaner(GameNameFormatted);
-            var GameRelease = filtered.ReleaseDate;
+            var GameRelease = filtered.release_date;
             var GamePub = filtered.Publisher;
             var GameSize = filtered.Size;
-            var GameIcon = "https://tinfoil.media/ti/" + filtered.ID + "/200/200/";
+            var GameIcon = "https://tinfoil.media/ti/" + filtered.ID + "/0/0/";
             var GameBanner = "https://tinfoil.media/thi/" + filtered.ID + "/0/0/";
             var baseURL = "https://tinfoil.io/Title/";
+            var GameURL = baseURL + GameID;
             //Output.WriteLine(GameIcon);
 
-            gameNameLabel.Text = GameNameFormatted;
+            gameNameLabel.Text = ("Game Name: " + GameNameFormatted);
+            gameIdLabel.Text = ("Game ID: " + GameID);
+            gameRelease.Text = ("Release Date: " + GameRelease);
+            gameBan1.Text = (GameBanner);
+            gameIco1.Text = (GameIcon);
+            gameSize.Text = ("Game Size: " + GameSize);
+            gamePublisher.Text = ("Publisher: " + GamePub);
+            gameURL1.Text = (GameURL);
+
             Output.WriteLine("Game Name Formatted: " + GameNameFormatted);
             Output.WriteLine("Game Name Folder Formatted: " + GameNameFolderFormat);
             Output.WriteLine(reggex);
-            gameIdLabel.Text = GameID;
+            Output.WriteLine(GameRelease);
             filtered.FormattedName = GameNameFormatted;
             filtered.FolderFormatName = GameNameFolderFormat;
             filtered.TinfoilSite = baseURL + GameID;
 
+            //Downloaded Folder Check
+            var dir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + @"\Tinfoil Resource Downloader\" + filtered.FolderFormatName;
+            if (!Directory.Exists(dir))
+            {
+                YN.Text = "No";
+                YN.ForeColor = System.Drawing.Color.Red;
+            }
+            else
+            {
+                YN.Text = "Yes (Downloading again will overwrite data!)";
+                YN.ForeColor = System.Drawing.Color.Green;
+            }
         }
 
         private async Task LoadImages(OBJData filtered)
@@ -125,7 +146,7 @@ namespace Tinfoil_Resource_Downloader
 
             //Icon
             
-            var iconRequest = await client.GetAsync(imageURL + filtered.ID + "/200/200/");
+            var iconRequest = await client.GetAsync(imageURL + filtered.ID + "/0/0/");
 
             using (var response = iconRequest.Content)
             using (var stream = await response.ReadAsStreamAsync())
@@ -133,7 +154,7 @@ namespace Tinfoil_Resource_Downloader
                 gameIcon.SizeMode = PictureBoxSizeMode.StretchImage;
                 gameIcon.Image = Image.FromStream(stream);
             }
-            filtered.NewIcon = imageURL + filtered.ID + "/2000/2000/";
+            filtered.NewIcon = imageURL + filtered.ID + "/0/0/";
 
             //Banner
             var bannerRequest = await client.GetAsync(bannerURL + filtered.ID + "/1920/1080/");
@@ -167,7 +188,7 @@ namespace Tinfoil_Resource_Downloader
                 gameScreenshots.Image = Image.FromStream(stream);
             }
 
-            screenshotPosition.Text = "1 / " + filtered.Screenshots.Count;
+            screenshotPosition.Text = "1 / " + (filtered.Screenshots.Count - 1);
 
             //Output.WriteLine(filtered.Screenshots.ToArray().ToString());
         }
@@ -176,7 +197,7 @@ namespace Tinfoil_Resource_Downloader
         {
             if (Initial == (filtered.Screenshots.Count - 1)) Initial = 0;
             var newImage = filtered.Screenshots[Initial++];
-            screenshotPosition.Text = Initial + " / " + filtered.Screenshots.Count;
+            screenshotPosition.Text = Initial + " / " + (filtered.Screenshots.Count - 1);
 
             var client = new HttpClient();
             var ssRequest = await client.GetAsync(newImage);
@@ -225,24 +246,24 @@ namespace Tinfoil_Resource_Downloader
 
             if (checkedConn1 == false)
             {
-                MessageBox.Show("Your device was unable to connect to one of the APIs: \r\n" + apiURL, "Error");
+                MessageBox.Show("Your device was unable to connect to one of the APIs: \r\n" + apiURL + "\r\n\r\nIs your device connected to the internet? Is Tinfoil.io/Title down?", "Error");
                 return false;
             } else if (checkedConn2 == false)
             {
-                MessageBox.Show("Your device was unable to connect to one of the APIs: \r\n" + imageURL, "Error");
+                MessageBox.Show("Your device was unable to connect to one of the APIs: \r\n" + imageURL + "\r\n\r\nIs your device connected to the internet? Is Tinfoil.io/Title down?", "Error");
                 return false;
             } else if (checkedConn3 == false)
             {
-                MessageBox.Show("Your device was unable to connect to one of the APIs: \r\n" + bannerURL, "Error");
+                MessageBox.Show("Your device was unable to connect to one of the APIs: \r\n" + bannerURL + "\r\n\r\nIs your device connected to the internet? Is Tinfoil.io/Title down?", "Error");
                 return false;
             } else if (checkedConn4 == false)
             {
-                MessageBox.Show("Your device was unable to connect to one of the APIs: \r\n" + mainURL, "Error");
+                MessageBox.Show("Your device was unable to connect to one of the APIs: \r\n" + mainURL + "\r\n\r\nIs your device connected to the internet? Is Tinfoil.io/Title down?", "Error");
                 return false;
             }
             else if (checkedConn1 && checkedConn2 && checkedConn3 && checkedConn4 == false)
             {
-                MessageBox.Show("Your device was unable to connect to one or more of the APIs: \r\n" + apiURL + "\r\n" + imageURL + "\r\n" + bannerURL + "\r\n" + mainURL, "Error");
+                MessageBox.Show("Your device was unable to connect to one or more of the APIs: \r\n" + apiURL + "\r\n" + imageURL + "\r\n" + bannerURL + "\r\n" + mainURL + "\r\n\r\nIs your device connected to the internet? Is Tinfoil.io/Title down?", "Error");
                 return false;
             } else return true;
         }
@@ -292,7 +313,7 @@ namespace Tinfoil_Resource_Downloader
                 FolderFormatName = filteredAlt.FolderFormatName,
                 Size = filteredAlt.Size,
                 Publisher = filteredAlt.Publisher,
-                ReleaseDate = filteredAlt.ReleaseDate,
+                ReleaseDate = filteredAlt.release_date,
                 Icon = filteredAlt.NewIcon,
                 Banner = filteredAlt.Banner,
                 Screenshots = filteredAlt.Screenshots,
@@ -481,7 +502,7 @@ namespace Tinfoil_Resource_Downloader
         public string FolderFormatName { get; set; }
         public string NewIcon { get; set; }
         public string Banner { get; set; }
-        public string ReleaseDate { get; set; }
+        public string release_date { get; set; }
         public string Publisher { get; set; }
         public string Size { get; set; }
         public string TinfoilSite { get; set; }

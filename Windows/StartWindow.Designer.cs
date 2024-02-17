@@ -47,7 +47,7 @@
             this.richTextBox1.Size = new System.Drawing.Size(587, 89);
             this.richTextBox1.TabIndex = 3;
             this.richTextBox1.Text = "Thank you for using this tool I\'ve created!\n\nWith this tool, you can download any" +
-    " resource including game Icons, Banners, and even screenshots!";
+    " resource including game icons, banners, and even screenshots!";
             // 
             // pictureBox1
             // 
@@ -88,7 +88,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(12, 428);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(133, 13);
+            this.label3.Size = new System.Drawing.Size(139, 13);
             this.label3.TabIndex = 14;
             this.label3.Text = "An app by @AKASGaming";
             // 
